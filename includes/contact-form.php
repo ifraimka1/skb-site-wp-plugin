@@ -81,8 +81,8 @@ function send_contact_form(WP_REST_Request $request) {
 	// Отправка письма
 	$to = 'mr.ifraim@yandex.ru';
 	$subject = 'Сообщение с контактной формы';
-	$body = "Имя: $name\nEmail: $email\nСообщение:\n$message";  
-	$headers = ['Content-Type: text/html; charset=UTF-8'];
+	$body = "Имя: $name".PHP_EOL."Email: $email".PHP_EOL."Сообщение:".PHP_EOL."$message";  
+	$headers = ['Content-Type: text/plain; charset=UTF-8'];
   
 	$sent = wp_mail($to, $subject, $body, $headers, $attachments);
 
@@ -100,13 +100,13 @@ function send_contact_form(WP_REST_Request $request) {
 
 function skbkit_register_contactform_route() {
 	register_rest_route(
-		'skbkit/v1', // Название вашего пространства имен и версии
-		'/send', // Путь маршрута
+		'skbkit/v1',
+		'/sendcontactform',
 		array(
-			'methods' => 'POST', // Или 'POST'
+			'methods' => 'POST',
 			'callback' => 'send_contact_form',
 			'permission_callback' => function () {
-				return true; // Упрощение для отладки
+				return true;
 			}
 		)
 	);
