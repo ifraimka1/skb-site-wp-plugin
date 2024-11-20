@@ -6,11 +6,22 @@ if (!defined('ABSPATH')) {
 
 $config_path = plugin_dir_path(__FILE__) . 'config.php';
 if (file_exists($config_path)) {
-    $smartcaptcha_server_key = require $config_path;
+	$config = require $config_path;
+    $smartcaptcha_server_key = $config['sc_server_key'];
+	$max_file_size = $config['max_file_size'];
 } else {
     wp_die('Файл config.php отсутствует.');
 }
 define('SMARTCAPTCHA_SERVER_KEY', $smartcaptcha_server_key);
+define('MAX_FILE_SIZE', $max_file_size);
+
+function is_valid_size($size) {
+	if ($size > MAX_FILE_SIZE) {
+		return false;
+	}
+
+	return true;
+}
 
 function is_valid_ext($name) {	
 	$ext = pathinfo($name, PATHINFO_EXTENSION);
@@ -69,6 +80,9 @@ function send_contact_form(WP_REST_Request $request) {
 
 		if (!is_valid_ext($original_file_name)) {
 			return new WP_REST_Response('Ошибка: неверный формат файла.', 403);
+		}
+		if (!is_valid_size($file['size'])) {
+			return new WP_REST_Response('Ошибка: файл слишком большой.', 403);
 		}
 
 		$new_file_path = sys_get_temp_dir() . '/' . $original_file_name;
