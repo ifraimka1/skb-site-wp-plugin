@@ -51,7 +51,7 @@ function parse_post($post)
             // $new_video->preview = $biggest_preview['url'];
             // $new_video->width = $biggest_preview['width'];
             // $new_video->height = $biggest_preview['height'];
-            
+
             // array_push($videos, $new_video);
         }
     }
@@ -62,6 +62,7 @@ function parse_post($post)
     $new_post->heading = $heading;
     $new_post->text = $text;
     $new_post->date = date('d.m.Y', $post['date']);
+    $new_post->views = $post['views']['count'];
     $new_post->photos = $photos;
     $new_post->videos = $videos;
 

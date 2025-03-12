@@ -14,7 +14,8 @@ function create_posts_table()
                 heading VARCHAR(255) NOT NULL,
                 text TEXT NOT NULL,
                 date VARCHAR(10) NOT NULL,
-                PRIMARY KEY  (id)
+                views BIGINT(20) NOT NULL,
+                PRIMARY KEY (id)
             ) $charset_collate;";
 
         // Используем dbDelta для создания таблицы
@@ -63,6 +64,7 @@ function insert_posts($wall)
                 "heading" => $post->heading,
                 "text" => $post->text,
                 "date" => $post->date,
+                "views" => $post->views,
             ]);
         }
 
