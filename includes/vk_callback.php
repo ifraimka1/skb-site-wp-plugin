@@ -11,15 +11,11 @@ if (!file_exists($config_path)) {
     wp_die('Файл config.php отсутствует.');
 }
 $config = require $config_path;
-$token = $config['vk_access_token'];
-$secret_key = $config['vk_callback_secret'];
-$confirm_key = $config['vk_callback_confirm'];
 
 // Конфигурация
 define('VK_API_VERSION', '5.131'); // Версия API VK
-define('VK_GROUP_ID', $config['vk_wall_id']); // ID вашей группы ВК
-define('VK_SECRET_KEY', $config['vk_callback_secret']); // Секретный ключ из настроек Callback API
-define('VK_CONFIRMATION_CODE', $config['vk_callback_confirm']); // Код подтверждения из настроек Callback API
+define('VK_SECRET_KEY', $config['test_vk_callback_secret']); // Секретный ключ из настроек Callback API
+define('VK_CONFIRMATION_CODE', $config['test_vk_callback_confirm']); // Код подтверждения из настроек Callback API
 
 $vk = new VKApiClient(VK_API_VERSION);
 
@@ -38,8 +34,12 @@ function vk_callback(WP_REST_Request $request)
 
     if ($data['type'] === 'wall_post_new') {
         $new_post = parse_post($data['object']);
-        insert_posts([$new_post]);
-        return new WP_REST_Response($new_post, 500);
+        $successful_insert = insert_posts([$new_post]);
+        if ($successful_insert) {
+            return new WP_REST_Response('ok', 200);
+        } else {
+            return new WP_REST_Response('Znaesh li ti, vdol night dorog', 500);
+        }
     }
 
     echo 'ok';

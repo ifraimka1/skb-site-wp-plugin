@@ -15,23 +15,22 @@ if (!file_exists($config_path)) {
 $config = require $config_path;
 $token = $config['vk_access_token'];
 
-function get_news_init(WP_REST_Request $request)
+function get_news_init(WP_REST_Request $request = null)
 {
     global $config, $token;
 
-    $password = sanitize_text_field($request->get_param('truncate'));
-    $truncate = $password === $config['truncatepassword'];
+    if ($request) {
+        $password = sanitize_text_field($request->get_param('truncate'));
+        $truncate = $password === $config['truncatepassword'];
 
-    if ($truncate) {
-        $result = truncate_posts();
-        if (!$result) {
-            return new WP_REST_Response("Не удалось очистить таблицу", 403);
+        if ($truncate) {
+            truncate_posts();
+        } else if ($password) {
+            return new WP_REST_Response("Не, такой базар ты не вывозишь.", 403);
         }
-    } else if ($password) {
-        return new WP_REST_Response("Не, такой базар ты не вывозишь.", 403);
     }
 
-    $wall_id = $config['vk_wall_id'];
+    $wall_id = $config['test_vk_wall_id'];
 
     $args = ['owner_id' => $wall_id];
 
