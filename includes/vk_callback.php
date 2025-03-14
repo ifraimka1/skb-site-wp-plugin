@@ -14,8 +14,8 @@ $config = require $config_path;
 
 // Конфигурация
 define('VK_API_VERSION', '5.131'); // Версия API VK
-define('VK_SECRET_KEY', $config['test_vk_callback_secret']); // Секретный ключ из настроек Callback API
-define('VK_CONFIRMATION_CODE', $config['test_vk_callback_confirm']); // Код подтверждения из настроек Callback API
+define('VK_SECRET_KEY', $config['vk_callback_secret']); // Секретный ключ из настроек Callback API
+define('VK_CONFIRMATION_CODE', $config['vk_callback_confirm']); // Код подтверждения из настроек Callback API
 
 $vk = new VKApiClient(VK_API_VERSION);
 

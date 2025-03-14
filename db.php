@@ -20,7 +20,6 @@ function create_posts_table()
                 heading VARCHAR(255) NOT NULL,
                 text TEXT NOT NULL,
                 date VARCHAR(10) NOT NULL,
-                views BIGINT(20) NOT NULL,
                 hash VARCHAR(255) NOT NULL,
                 PRIMARY KEY (id)
             ) $charset_collate;";
@@ -66,7 +65,6 @@ function insert_posts($wall)
                 "heading" => $post->heading,
                 "text" => $post->text,
                 "date" => $post->date,
-                "views" => $post->views,
                 "hash" => $post->hash,
             ]);
             return $status;

@@ -23,7 +23,7 @@ function skbkit_check_posts() {
 
     $posts_to_check_ids = [];
     foreach ($posts_to_check as $post) {
-        array_push($posts_to_check_ids, $config['test_vk_wall_id'].$post->id);
+        array_push($posts_to_check_ids, $config['vk_wall_id'].'_'.$post->id);
     }
     
     $token = $config['vk_access_token'];

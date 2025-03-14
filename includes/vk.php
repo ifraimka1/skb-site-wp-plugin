@@ -6,18 +6,20 @@ require_once __DIR__ . '/../db.php';
 
 use VK\Client\VKApiClient;
 
-global $config, $token;
+global $config;
 
 $config_path = plugin_dir_path(__FILE__) . 'config.php';
 if (!file_exists($config_path)) {
     wp_die('Файл config.php отсутствует.');
 }
 $config = require $config_path;
-$token = $config['vk_access_token'];
+
+define('VK_ACCESS_TOKEN', $config['vk_access_token']);
+define('VK_WALL_ID', $config['vk_wall_id']);
 
 function get_news_init(WP_REST_Request $request = null)
 {
-    global $config, $token;
+    global $config;
 
     if ($request) {
         $password = sanitize_text_field($request->get_param('truncate'));
@@ -30,12 +32,12 @@ function get_news_init(WP_REST_Request $request = null)
         }
     }
 
-    $wall_id = $config['test_vk_wall_id'];
+    $wall_id = $config['vk_wall_id'];
 
     $args = ['owner_id' => $wall_id];
 
     $vk = new VKApiClient();
-    $response = $vk->wall()->get($token, $args);
+    $response = $vk->wall()->get(VK_ACCESS_TOKEN, $args);
     $wall = parse_wall($response);
 
     insert_posts($wall);
@@ -72,6 +74,7 @@ function get_news_by_id(WP_REST_Request $request)
 {
     global $wpdb;
 
+
     $table_posts = $wpdb->prefix . 'skbkit_vk_posts';
     $table_att = $wpdb->prefix . 'skbkit_vk_posts_attachments';
 
@@ -86,6 +89,14 @@ function get_news_by_id(WP_REST_Request $request)
             WHERE posts.id = $id
             ORDER BY posts.id";
     $rows = $wpdb->get_results($sql);
+    
+    $vk = new VKApiClient('5.199');
+    $args = ['posts' => VK_WALL_ID.'_'.$id]; 
+    $response = $vk->wall()->getById(VK_ACCESS_TOKEN, $args);
+    $views = $response['items'][0]['views']['count'];
+    if (!$views) {
+        $views = 0;
+    }
 
     $text = explode("\n", $rows[0]->text);
     $text = array_filter($text, function ($value) {
@@ -97,6 +108,7 @@ function get_news_by_id(WP_REST_Request $request)
     $post->heading = $rows[0]->heading;
     $post->text = array_values($text);
     $post->date = $rows[0]->date;
+    $post->views = $views;
     $post->photos = [];
     $post->videos = [];
 

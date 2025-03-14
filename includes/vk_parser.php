@@ -72,7 +72,6 @@ function parse_post($post)
     $new_post->heading = $heading;
     $new_post->text = $text;
     $new_post->date = $post['date'];
-    $new_post->views = $post['views']['count'] === null ? 0 : $post['views']['count'];
     $new_post->hash = get_post_hash($post['text']);
     $new_post->photos = $photos;
     $new_post->videos = $videos;
