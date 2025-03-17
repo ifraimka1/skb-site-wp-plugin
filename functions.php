@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 // Отключает стили темы TwentyTwentyFour в Wordpress
 add_action('wp_enqueue_scripts', function () {
     wp_dequeue_style('wp-block-site-logo');
@@ -41,33 +45,34 @@ add_action('wp_enqueue_scripts', function () {
     wp_dequeue_style('wp-mail-smtp-admin-bar');
 }, 999);
 
-//add_action( 'wp_print_scripts', 'true_inspect_script_style' );
- 
-function true_inspect_script_style() {
- 
-	global $wp_scripts, $wp_styles;
- 
-	// не запускаем для неадминистраторов
-	if( ! current_user_can( 'administrator' ) ) {
-		return;
-	}
- 
-	// не запускаем в админке, иначе мы в неё уже не попадём
-	if( is_admin() ) {
-		return;
-	}
+// add_action('wp_print_scripts', 'true_inspect_script_style');
 
-    $wall = require("includes/vk.php");
- 
-	// погнали
-	wp_die(
-	 	'
+function true_inspect_script_style()
+{
+
+    global $wp_scripts, $wp_styles;
+
+    // не запускаем для неадминистраторов
+    if (! current_user_can('administrator')) {
+        return;
+    }
+
+    // не запускаем в админке, иначе мы в неё уже не попадём
+    if (is_admin()) {
+        return;
+    }
+
+    $wall = require_once("includes/vk.php");
+
+    // погнали
+    wp_die(
+        '
 		<h1>Scripts</h1>
-		<p>' . join( '<br>', $wp_scripts->queue ) . '</p>
+		<p>' . join('<br>', $wp_scripts->queue) . '</p>
 		<h1>Styles</h1>
-		<p>' . join( '<br>', $wp_styles->queue ) . '</p>
+		<p>' . join('<br>', $wp_styles->queue) . '</p>
         <h1>Wall</h1>
         <pre><p>' . print_r($wall) . '</p></pre>
 		'
-	);
+    );
 }
