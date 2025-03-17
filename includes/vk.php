@@ -33,16 +33,24 @@ function get_news_init(WP_REST_Request $request = null)
     }
 
     $wall_id = $config['vk_wall_id'];
-
-    $args = ['owner_id' => $wall_id];
-
+    $count = 50;
+    $total = $count;
+    $args = ['owner_id' => $wall_id, 'count' => $count, 'offset' => 0];
+    
     $vk = new VKApiClient();
-    $response = $vk->wall()->get(VK_ACCESS_TOKEN, $args);
-    $wall = parse_wall($response);
 
-    insert_posts($wall);
+    while ($args['offset'] < $total) {
+        $response = $vk->wall()->get(VK_ACCESS_TOKEN, $args);
+        parse_wall($response);
 
-    return $wall;
+        if ($total !== $response['count']) $total = $response['count'];
+
+        $args['offset'] += $count;
+        sleep(1);
+    }
+
+
+    return $args['offset'];
 }
 
 function get_news(WP_REST_Request $request)
@@ -89,9 +97,9 @@ function get_news_by_id(WP_REST_Request $request)
             WHERE posts.id = $id
             ORDER BY posts.id";
     $rows = $wpdb->get_results($sql);
-    
+
     $vk = new VKApiClient('5.199');
-    $args = ['posts' => VK_WALL_ID.'_'.$id]; 
+    $args = ['posts' => VK_WALL_ID . '_' . $id];
     $response = $vk->wall()->getById(VK_ACCESS_TOKEN, $args);
     $views = $response['items'][0]['views']['count'];
     if (!$views) {
@@ -177,4 +185,4 @@ function skbkit_register_vk_routes()
     );
 }
 
-add_action('rest_api_init', 'skbkit_register_vk_routes');
+// add_action('rest_api_init', 'skbkit_register_vk_routes');

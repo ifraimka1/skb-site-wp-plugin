@@ -24,7 +24,7 @@ function get_biggest_preview($array)
 
 function parse_post($post)
 {
-    //if (!str_contains($post['text'], '#НовостиСКБ')) return;
+    if (!str_contains($post['text'], 'НовостиСКБ')) return;
 
     // ОБРАБОТКА ТЕКСТА
     // Ссылки на страницы VK
@@ -76,6 +76,8 @@ function parse_post($post)
     $new_post->photos = $photos;
     $new_post->videos = $videos;
 
+    insert_post($new_post);
+
     return $new_post;
 }
 
@@ -84,11 +86,7 @@ function parse_wall($response)
     $result = [];
 
     foreach ($response['items'] as $post) {
-        $new_post = parse_post($post);
-
-        if (!isset($new_post)) continue;
-
-        array_push($result, $new_post);
+        parse_post($post);
     }
 
     return $result;

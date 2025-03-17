@@ -54,41 +54,36 @@ function create_attachments_table()
     }
 }
 
-function insert_posts($wall)
+function insert_post($post)
 {
     global $wpdb, $table_posts, $table_att;
 
-    foreach ($wall as $post) {
-        if (!$wpdb->get_row("SELECT * FROM $table_posts WHERE id = $post->id")) {
-            $status = $wpdb->insert($table_posts, [
-                "id" => $post->id,
-                "heading" => $post->heading,
-                "text" => $post->text,
-                "date" => $post->date,
-                "hash" => $post->hash,
-            ]);
-            return $status;
-        }
+    if (!$wpdb->get_row("SELECT * FROM $table_posts WHERE id = $post->id")) {
+        $wpdb->insert($table_posts, [
+            "id" => $post->id,
+            "heading" => $post->heading,
+            "text" => $post->text,
+            "date" => $post->date,
+            "hash" => $post->hash,
+        ]);
+
 
         foreach ($post->photos as $photo) {
-            if (!$wpdb->get_row("SELECT * FROM $table_att WHERE url LIKE '$photo'")) {
-                $wpdb->insert($table_att, [
-                    "postid" => $post->id,
-                    "url" => $photo,
-                    "type" => 'photo',
-                ]);
-            }
+            $wpdb->insert($table_att, [
+                "postid" => $post->id,
+                "url" => $photo,
+                "type" => 'photo',
+            ]);
         }
+
         foreach ($post->videos as $video) {
-            if (!$wpdb->get_row("SELECT * FROM $table_att WHERE url LIKE '$video->preview'")) {
-                $wpdb->insert($table_att, [
-                    "postid" => $post->id,
-                    "url" => $video->preview,
-                    "type" => 'video',
-                ]);
-            }
+            $wpdb->insert($table_att, [
+                "postid" => $post->id,
+                "url" => $video->preview,
+                "type" => 'video',
+            ]);
         }
-    }
+    };
 }
 
 function truncate_posts()

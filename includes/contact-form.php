@@ -126,4 +126,4 @@ function skbkit_register_contactform_route() {
 	);
 }
 
-add_action('rest_api_init', 'skbkit_register_contactform_route');
+//add_action('rest_api_init', 'skbkit_register_contactform_route');

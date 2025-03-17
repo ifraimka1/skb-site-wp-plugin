@@ -34,7 +34,7 @@ function vk_callback(WP_REST_Request $request)
 
     if ($data['type'] === 'wall_post_new') {
         $new_post = parse_post($data['object']);
-        $successful_insert = insert_posts([$new_post]);
+        $successful_insert = insert_post($new_post);
         if ($successful_insert) {
             return new WP_REST_Response('ok', 200);
         } else {
