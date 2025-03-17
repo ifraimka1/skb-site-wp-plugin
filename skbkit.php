@@ -28,6 +28,8 @@ function plugin_activation()
     wp_schedule_event(time(), 'hourly', 'skbkit_hourly_event');
 }
 
+add_action('rest_api_init', 'skbkit_register_contactform_route');
+add_action('rest_api_init', 'skbkit_register_vk_routes');
 add_action('skbkit_hourly_event', 'skbkit_check_posts');
 
 register_activation_hook(__FILE__, 'plugin_activation');
